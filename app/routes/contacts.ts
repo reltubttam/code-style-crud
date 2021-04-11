@@ -1,8 +1,14 @@
 import { Contact } from '../db';
 import Router from 'koa-router';
 const router = Router();
+import { isContact } from '../lib/validation/contacts';
+import { MalformedEntityError, EntityNotFoundError } from '../lib/errors';
 
 router.post('/contacts', async (ctx) => {
+  if (!isContact(ctx.request.body.contact)){
+    throw MalformedEntityError();
+  }
+
   const contact = await Contact.create(ctx.request.body.contact);
 
   ctx.body = {
@@ -24,7 +30,7 @@ router.get('/contacts/:contactId', async (ctx) => {
   const contact = await Contact.findOne(ctx.params.contactId);
 
   if (!contact) {
-    throw new Error('NOT FOUND');
+    throw EntityNotFoundError();
   }
 
   ctx.body = {
@@ -34,10 +40,14 @@ router.get('/contacts/:contactId', async (ctx) => {
 });
 
 router.put('/contacts/:contactId', async (ctx) => {
+  if (!isContact(ctx.request.body.contact)){
+    throw MalformedEntityError();
+  }
+
   const contact = await Contact.update(ctx.params.contactId, ctx.request.body.contact);
 
   if (!contact) {
-    throw new Error('NOT FOUND');
+    throw EntityNotFoundError();
   }
 
   ctx.body = {
@@ -50,7 +60,7 @@ router.delete('/contacts/:contactId', async (ctx) => {
   const contact = await Contact.findOne(ctx.params.contactId);
 
   if (!contact) {
-    throw new Error('NOT FOUND');
+    throw EntityNotFoundError();
   }
 
   await Contact.destroy(ctx.params.contactId);
