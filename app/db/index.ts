@@ -1,5 +1,4 @@
-import { Contact } from './models/contacts';
+import { Contact as ContactModel } from './models/contacts';
+import { CachedModel } from './cachedModel';
 
-export {
-  Contact,
-};
+export const Contact = CachedModel(ContactModel);

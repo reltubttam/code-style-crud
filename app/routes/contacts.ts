@@ -21,11 +21,7 @@ router.get('/contacts', async (ctx) => {
 });
 
 router.get('/contacts/:contactId', async (ctx) => {
-  const contact = await Contact.findOne({
-    where: {
-      id: ctx.params.contactId,
-    },
-  });
+  const contact = await Contact.findOne(ctx.params.contactId);
 
   if (!contact) {
     throw new Error('NOT FOUND');
@@ -38,12 +34,7 @@ router.get('/contacts/:contactId', async (ctx) => {
 });
 
 router.put('/contacts/:contactId', async (ctx) => {
-  const contact = await Contact.update(ctx.request.body.contact, {
-    where: {
-      id: ctx.params.contactId,
-    },
-    returning: true,
-  });
+  const contact = await Contact.update(ctx.params.contactId, ctx.request.body.contact);
 
   if (!contact) {
     throw new Error('NOT FOUND');
@@ -56,21 +47,13 @@ router.put('/contacts/:contactId', async (ctx) => {
 });
 
 router.delete('/contacts/:contactId', async (ctx) => {
-  const contact = await Contact.findOne({
-    where: {
-      id: ctx.params.contactId,
-    },
-  });
+  const contact = await Contact.findOne(ctx.params.contactId);
 
   if (!contact) {
     throw new Error('NOT FOUND');
   }
 
-  await Contact.destroy({
-    where: {
-      id: ctx.params.contactId,
-    },
-  });
+  await Contact.destroy(ctx.params.contactId);
 
   ctx.body = {
     contact,
